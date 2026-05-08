@@ -20,6 +20,15 @@
 \setlength{\floatsep}{6pt plus 1pt minus 2pt}
 \setlength{\intextsep}{6pt plus 1pt minus 2pt}
 
+% Allow LaTeX to place figures more flexibly and reduce blank space
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.80}
+\setcounter{topnumber}{5}
+\setcounter{bottomnumber}{5}
+\setcounter{totalnumber}{10}
+
 \title{\vspace{-1.2em}\textbf{Game Playing with Reinforcement Learning on Stochastic FrozenLake}\\[-0.25em]
 {\large Benchmarking Tabular Agents on Standard and Controlled Maps}}
 \author{Group 8: Chi Kit WONG, Haodong XU, Sida ZHANG\\
@@ -75,7 +84,7 @@ The learning objective is to find a policy that maximizes expected return, which
 
 All reported experiments use \texttt{slippery=True}. In each step, the environment samples one of three outcomes: the intended direction, the left deviation, or the right deviation, each with probability $1/3$. This matches the standard FrozenLake stochastic transition idea and prevents the task from becoming deterministic maze following.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.88\linewidth]{figures_compact/frozenlake_environment_overview.png}
     \caption{FrozenLake environment overview. The agent starts at \texttt{S}, reaches \texttt{G}, avoids holes \texttt{H}, and evaluates greedy policies under stochastic slippery transitions.}
@@ -109,7 +118,7 @@ The primary game-playing metric is greedy evaluation success rate after training
 \subsection{Standard 4x4 Baseline}
 Figure~\ref{fig:standard4} shows the latest standard 4$\times$4 slippery rerun. The oracle reaches 0.847 success, which confirms that the stochastic setting is not expected to reach a guaranteed 1.0 success rate. Q-learning reaches 0.770, optimistic Q-learning reaches 0.767, SARSA reaches 0.723, and Expected SARSA reaches 0.680. These values are plausible for slippery FrozenLake and avoid the misleading 1.0 success rates from overly easy random maps.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.78\linewidth]{figures_compact/standard_4x4_slippery_only_success.jpg}
     \caption{Standard 4$\times$4 slippery FrozenLake results. The map has four holes, and all evaluation is stochastic.}
@@ -121,7 +130,7 @@ The next step was to test whether the same pipeline works on Gymnasium's standar
 
 The standard Gymnasium 8$\times$8 map is an important benchmark. It is widely used, reproducible, and challenging without being degenerate. In our run, its oracle success is 0.861, and the learned mean success across the seven algorithms is 0.709. Several algorithms learn strong policies on this map: Expected SARSA reaches 0.85, Q($\lambda$) reaches 0.85, optimistic Q-learning reaches 0.82, Q-learning reaches 0.78, SARSA($\lambda$) reaches 0.76, and SARSA reaches 0.74. This confirms that the training pipeline can handle a standard stochastic 8$\times$8 benchmark.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.78\linewidth]{figures_compact/gymnasium8/standard8_learning_curve.png}
     \caption{Learning curves on the Gymnasium standard 8$\times$8 slippery map. This figure is kept as a standard reference point before the random-map diagnostic.}
@@ -130,14 +139,14 @@ The standard Gymnasium 8$\times$8 map is an important benchmark. It is widely us
 
 Gymnasium-generated random maps answer a different design question: what happens if we rely directly on the library's random-map generator at lower frozen-tile probabilities? The answer is that performance drops sharply on many generated random maps, and the reason is visible from the oracle. Several $p=0.5$ and $p=0.6$ random maps have oracle success near zero under slippery dynamics. These maps are technically connected, because the generator guarantees a path from start to goal, but the stochastic transition model makes reliable completion extremely unlikely. Across all 13 Gymnasium maps, including the standard map and the random maps, optimistic Q-learning remains the best learned method, but its mean final success is only 0.235 because the near-impossible generated maps dominate the average. This diagnostic result explains why the project moved toward carefully controlled maps for fair algorithm ranking.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.96\linewidth]{figures_compact/gymnasium8/gym8_final_success_heatmap.jpg}
     \caption{Gymnasium 8$\times$8 slippery final success. The standard 8$\times$8 map is a useful benchmark, while several low-$p$ generated maps are too difficult for fair ranking.}
     \label{fig:gym8success}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.96\linewidth]{figures_compact/gymnasium8/gym8_oracle_gap_heatmap.jpg}
     \caption{Oracle gap on Gymnasium 8$\times$8 maps. The standard map is solvable, while several generated low-$p$ maps are almost impossible under slippery dynamics.}
@@ -147,7 +156,7 @@ Gymnasium-generated random maps answer a different design question: what happens
 \subsection{Controlled 4x4 Maps}
 Figure~\ref{fig:designed4} reports the controlled random 4$\times$4 experiment. These maps also have exactly four holes and are therefore much more credible than high-$p$ random maps. In this aggregate, optimistic Q-learning has the highest mean success rate, but the result should still be read as a credibility check rather than a strong ranking claim because the map set is small and the cross-map variability is large. The controlled 4$\times$4 setting confirms that the algorithms behave plausibly on non-trivial small boards, while the more reliable algorithm ranking should come from the larger 8$\times$8 controlled benchmark.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.82\linewidth]{figures_compact/designed_4x4_exact4holes_aggregate.jpg}
     \caption{Designed random 4$\times$4 maps with exactly four holes. This is the controlled random-map counterpart to the standard 4$\times$4 map.}
@@ -159,7 +168,7 @@ The controlled 8$\times$8 setting is the main comparison benchmark in this repor
 
 Figure~\ref{fig:summaryheatmap} summarizes the updated stochastic results. The random 8$\times$8 numbers use 10,000 training episodes with evaluation every 500 episodes. Optimistic Q-learning is the strongest learned method on controlled random 8$\times$8, reaching 0.988 mean final success over 20 maps. Expected SARSA, SARSA, Q-learning, Q($\lambda$), and Dyna-Q also improve substantially under the longer budget. These are the results that best support an algorithm-comparison story for the presentation and report.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.92\linewidth]{figures_compact/stochastic_success_heatmap.jpg}
     \caption{Mean success rate across the stochastic benchmark. The heatmap uses explicit per-cell text annotations and includes the long-budget random-map update.}
@@ -168,7 +177,7 @@ Figure~\ref{fig:summaryheatmap} summarizes the updated stochastic results. The r
 
 Figure~\ref{fig:difficulty} shows the long-budget controlled random 8$\times$8 difficulty sweep. Each point is an individual map, and the short horizontal marks indicate the mean for each algorithm and frozen-tile probability. This version is more interpretable than a single aggregate line plot because it exposes map-to-map variation directly. The high scores should therefore be interpreted as ``solving the controlled stochastic benchmark'', not as solving every possible randomly generated 8$\times$8 FrozenLake map.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.9\linewidth]{figures_compact/random8_final_success_points_by_probability.jpg}
     \caption{Random 8$\times$8 slippery final success by frozen-tile probability after 10,000 training episodes. Each dot is one map.}
@@ -177,7 +186,7 @@ Figure~\ref{fig:difficulty} shows the long-budget controlled random 8$\times$8 d
 
 Figure~\ref{fig:learningpanel} shows per-map learning curves rather than one mixed curve. This directly addresses the variance problem: different maps have different learning difficulty even when their oracle success is high. The per-map plots show when an algorithm genuinely fails to converge on a specific layout.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.188\linewidth]{figures_compact/per_map_random8/p0.80_m0_learning_curve.png}\hfill
     \includegraphics[width=0.188\linewidth]{figures_compact/per_map_random8/p0.80_m1_learning_curve.png}\hfill
@@ -212,7 +221,7 @@ Figure~\ref{fig:learningpanel} shows per-map learning curves rather than one mix
 \subsection{Key Numerical Results}
 Table~\ref{tab:keyresults} reports the learned-agent success rates across the main stochastic settings. This table is meant to be a compact ranking matrix rather than a cherry-picked list: every main tabular algorithm is shown in every reported setting where it was evaluated. The Gymnasium random column is a diagnostic average over the standard 8$\times$8 map plus the generated random maps, so it should not be mixed directly with the controlled benchmark columns.
 
-\begin{table}[H]
+\begin{table}[!htbp]
 \centering
 \caption{Mean final greedy evaluation success across stochastic settings. Higher is better.}
 \label{tab:keyresults}
@@ -239,7 +248,7 @@ The controlled random 8$\times$8 column is the main comparison result because it
 \subsection{Exploration Ablation}
 Figure~\ref{fig:explore} isolates exploration strategy on fixed 8$\times$8 slippery FrozenLake. Optimistic Q-learning reaches 0.817 and Q-learning reaches 0.760. UCB-Q and softmax Q-learning perform poorly under this training budget, reaching 0.133 and 0.100. The result suggests that simple optimistic initialization is especially effective in this sparse tabular task: unknown actions remain attractive long enough for the agent to discover the goal.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.76\linewidth]{figures_compact/exploration_ablation_fixed_8x8.jpg}
     \caption{Exploration ablation on fixed 8$\times$8 slippery FrozenLake. Optimistic initialization is the strongest exploration mechanism here.}
@@ -249,7 +258,7 @@ Figure~\ref{fig:explore} isolates exploration strategy on fixed 8$\times$8 slipp
 \subsection{Oracle-Gap Analysis}
 Figure~\ref{fig:gap} measures how far learned policies are from the known-model oracle on each random 8$\times$8 map. Optimistic Q-learning has the smallest mean gap after the long run. Some non-optimistic methods still have isolated hard-map failures, which is why per-map heatmaps are more useful than a single averaged line.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.96\linewidth]{figures_compact/random8_oracle_gap_heatmap_by_map.jpg}
     \caption{Oracle gap on random 8$\times$8 slippery maps after 10,000 training episodes. Lower is better. Every cell is explicitly annotated.}
@@ -258,7 +267,7 @@ Figure~\ref{fig:gap} measures how far learned policies are from the known-model 
 
 Figure~\ref{fig:aucconv} gives two additional views: AUC measures how good the whole learning process is, while the convergence heatmap reports the first episode at which success reaches 0.80. Dyna-Q has a high mean AUC and early average convergence, even though its final score is slightly below the strongest methods.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.96\linewidth]{figures_compact/random8_auc_heatmap_by_map.jpg}
     \caption{Evaluation AUC by algorithm and random 8$\times$8 map. Higher values mean better performance throughout training, not only at the end.}
@@ -270,7 +279,7 @@ We use Optuna with the TPE sampler because it is simple to run locally, supports
 
 On fixed 8$\times$8 stochastic FrozenLake, the best Optuna validation scores were 0.830 for optimistic Q-learning, 0.795 for Dyna-Q, 0.735 for Q-learning, and 0.665 for Expected SARSA. Three-seed validation confirmed tuned optimistic Q-learning and tuned Dyna-Q as the strongest tuned candidates. Optuna is therefore a good choice for this report; Ray Tune would be more appropriate only if we scaled to many more maps or GPU-based neural RL.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.72\linewidth]{figures_compact/optuna_best_scores.jpg}
     \caption{Best Optuna validation scores on fixed 8$\times$8 stochastic FrozenLake.}
