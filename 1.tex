@@ -1,0 +1,53 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper,margin=0.68in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{float}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.26em}
+\setlist{nosep,leftmargin=1.4em}
+\captionsetup{font=small,skip=2pt}
+\setlength{\textfloatsep}{7pt plus 1pt minus 2pt}
+\setlength{\floatsep}{6pt plus 1pt minus 2pt}
+\setlength{\intextsep}{6pt plus 1pt minus 2pt}
+
+\title{\vspace{-1.2em}\textbf{Game Playing with Reinforcement Learning on Stochastic FrozenLake}\\[-0.25em]
+{\large Benchmarking Tabular Agents on Standard and Controlled Maps}}
+\author{Group 8: Chi Kit WONG, Haodong XU, Sida ZHANG\\
+AIAA3053 Reinforcement Learning Principles and Methods}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-1.8em}
+
+\begin{abstract}
+This project studies FrozenLake as a stochastic grid-world game-playing task. A player-controlled agent starts from the start tile, avoids holes, and tries to reach the goal; in the slippery version, the executed move may deviate from the intended move. We therefore treat the problem as game playing under transition uncertainty rather than deterministic maze solving. Starting from an initial 4$\times$4 Q-learning implementation, we build a broader RL game-agent comparison across Q-learning, SARSA, Expected SARSA, SARSA($\lambda$), Q($\lambda$), Dyna-Q, and optimistic Q-learning, with Value Iteration as a known-model oracle. A central part of the project is the evolution of the experimental design. We first used Gymnasium as a reference point: the standard Gymnasium 8$\times$8 map is a strong benchmark and sanity check, while Gymnasium-generated low-$p$ random maps revealed a problem--many are connected but nearly impossible under slippery dynamics. We therefore introduced controlled maps: designed 4$\times$4 maps with exactly four holes and oracle filtering, plus controlled random 8$\times$8 maps with fixed frozen-tile probabilities and guaranteed connectivity. These maps are solvable, non-trivial, reproducible, and better suited for comparing game-playing agents. On the controlled random 8$\times$8 benchmark, optimistic Q-learning reaches 0.988 mean final success, followed by Expected SARSA and SARSA above 0.89. The Gymnasium standard 8$\times$8 result is retained as an important standard game benchmark, and the Gymnasium random-map results are retained as a diagnostic motivation for careful map design.
+\end{abstract}
+
+\section{Introduction}
+FrozenLake is a compact game-playing environment for reinforcement learning (RL). The game board is a frozen grid: the player starts at \texttt{S}, tries to reach \texttt{G}, and loses the episode by falling into a hole \texttt{H}. Rewards are sparse: the agent receives reward 1 only at the goal and 0 elsewhere. In the slippery version, an intended move can slip to a neighboring direction, so the task is not simply finding a shortest path. A good game-playing policy must choose actions that remain robust when the environment executes a nearby unintended move.
+
+The original course project theme was game playing with Q-learning. The initial implementation already trained a Q-learning agent on 4$\times$4 FrozenLake, but it left three open questions: whether other RL game-playing agents behave differently, whether results hold beyond a single small board, and whether hyperparameter choices are credible. This report addresses those questions with a stochastic-only benchmark, controlled map design, and focused ablation studies. The final benchmark was not chosen blindly: it was shaped by the contrast between the useful Gymnasium standard 8$\times$8 game board and the often near-impossible Gymnasium low-$p$ random boards.
+
+The research questions are:
+\begin{enumerate}
+    \item Which tabular RL game-playing agents are strongest on slippery FrozenLake?
+    \item Why is controlled board design necessary for fair algorithm comparison on stochastic FrozenLake?
+    \item Is performance mainly limited by exploration or by map-specific failure cases?
+    \item Does automated hyperparameter search improve the strongest methods?
+\end{enumerate}
+
+\section{Related Work}
+Q-learning is a classical off-policy temporal-difference control method that uses a max next-state target \cite{watkins1992q}. SARSA and Expected SARSA are on-policy alternatives that update values under the behavior policy rather than an ideal greedy target \cite{SuttonBarto2018}. Eligibility-trace methods such as SARSA($\lambda$) and Q($\lambda$) propagate TD errors through recent state-action trajectories, which can help sparse rewards reach earlier decisions \cite{SuttonBarto2018}. Dyna-Q combines model-free learning with planning updates from a learned transition model, reusing scarce experience more efficiently \cite{SuttonBarto2018}.
+
+FrozenLake is widely used in Gymnasium teaching material for Q-learning and map-size sensitivity \cite{GymnasiumFrozenLakeTutorial}. Our study follows the same qualitative motivation but adds a broader tabular comparison, oracle references, Optuna tuning, and controlled random-map tests. For tuning, we use Optuna's Tree-structured Parzen Estimator (TPE) sampler \cite{OptunaTPESampler}. Larger distributed sweeps could use Ray Tune with ASHA/HyperBand \cite{RayTuneSchedulers}, but Optuna is lightweight and appropriate for the current coursework-scale experiments.
