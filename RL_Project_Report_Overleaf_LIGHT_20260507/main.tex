@@ -90,7 +90,7 @@ The learning objective is to find a policy that maximizes expected return, which
 
 All reported experiments use \texttt{slippery=True}. In each step, the environment samples one of three outcomes: the intended direction, the left deviation, or the right deviation, each with probability $1/3$. This matches the standard FrozenLake stochastic transition idea and prevents the task from becoming deterministic maze following. Figure~\ref{fig:envoverview} illustrates the FrozenLake layout, terminal states, and the slippery transition setting used throughout the report.
 
-\begin{figure}[!htbp]
+\begin{figure}[p]
     \centering
     \includegraphics[width=0.88\linewidth]{figures_compact/frozenlake_environment_overview.png}
     \caption{FrozenLake environment overview. The agent starts at \texttt{S}, reaches \texttt{G}, avoids holes \texttt{H}, and evaluates greedy policies under stochastic slippery transitions.}
@@ -124,7 +124,7 @@ The primary game-playing metric is greedy evaluation success rate after training
 \subsection{Standard 4x4 Baseline}
 Figure~\ref{fig:standard4} shows the latest standard 4$\times$4 slippery rerun. The oracle reaches 0.847 success, which confirms that the stochastic setting is not expected to reach a guaranteed 1.0 success rate. Q-learning reaches 0.770, optimistic Q-learning reaches 0.767, SARSA reaches 0.723, and Expected SARSA reaches 0.680. These values are plausible for slippery FrozenLake and avoid the misleading 1.0 success rates from overly easy random maps.
 
-\begin{figure}[!htbp]
+\begin{figure}[p]
     \centering
     \includegraphics[width=0.78\linewidth]{figures_compact/standard_4x4_slippery_only_success.jpg}
     \caption{Standard 4$\times$4 slippery FrozenLake results. The map has four holes, and all evaluation is stochastic.}
