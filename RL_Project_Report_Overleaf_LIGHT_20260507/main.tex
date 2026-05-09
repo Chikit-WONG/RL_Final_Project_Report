@@ -37,11 +37,17 @@ AIAA3053 Reinforcement Learning Principles and Methods}
 
 \begin{document}
 \maketitle
-\vspace{-1.8em}
+
+% \noindent\textbf{Code Repository:} \url{https://github.com/Chikit-WONG/RL_Project}
+\begin{center}
+\textbf{Code Repository:} \url{https://github.com/Chikit-WONG/RL_Project}
+\end{center}
+
+% \vspace{-1.8em}
 
 \begin{abstract}
-Our code is available at: \url{https://github.com/Chikit-WONG/RL_Project}. \\
-\indent This project studies FrozenLake as a stochastic grid-world game-playing task. A player-controlled agent starts from the start tile, avoids holes, and tries to reach the goal; in the slippery version, the executed move may deviate from the intended move. We therefore treat the problem as game playing under transition uncertainty rather than deterministic maze solving. Starting from an initial 4$\times$4 Q-learning implementation, we build a broader RL game-agent comparison across Q-learning, SARSA, Expected SARSA, SARSA($\lambda$), Q($\lambda$), Dyna-Q, and optimistic Q-learning, with Value Iteration as a known-model oracle. A central part of the project is the evolution of the experimental design. We first used Gymnasium as a reference point: the standard Gymnasium 8$\times$8 map is a strong benchmark and sanity check, while Gymnasium-generated low-$p$ random maps revealed a problem--many are connected but nearly impossible under slippery dynamics. We therefore introduced controlled maps: designed 4$\times$4 maps with exactly four holes and oracle filtering, plus controlled random 8$\times$8 maps with fixed frozen-tile probabilities and guaranteed connectivity. These maps are solvable, non-trivial, reproducible, and better suited for comparing game-playing agents. On the controlled random 8$\times$8 benchmark, optimistic Q-learning reaches 0.988 mean final success, followed by Expected SARSA and SARSA above 0.89. The Gymnasium standard 8$\times$8 result is retained as an important standard game benchmark, and the Gymnasium random-map results are retained as a diagnostic motivation for careful map design.
+% Our code is available at: \url{https://github.com/Chikit-WONG/RL_Project}. \\
+\noindent This project studies FrozenLake as a stochastic grid-world game-playing task. A player-controlled agent starts from the start tile, avoids holes, and tries to reach the goal; in the slippery version, the executed move may deviate from the intended move. We therefore treat the problem as game playing under transition uncertainty rather than deterministic maze solving. Starting from an initial 4$\times$4 Q-learning implementation, we build a broader RL game-agent comparison across Q-learning, SARSA, Expected SARSA, SARSA($\lambda$), Q($\lambda$), Dyna-Q, and optimistic Q-learning, with Value Iteration as a known-model oracle. A central part of the project is the evolution of the experimental design. We first used Gymnasium as a reference point: the standard Gymnasium 8$\times$8 map is a strong benchmark and sanity check, while Gymnasium-generated low-$p$ random maps revealed a problem--many are connected but nearly impossible under slippery dynamics. We therefore introduced controlled maps: designed 4$\times$4 maps with exactly four holes and oracle filtering, plus controlled random 8$\times$8 maps with fixed frozen-tile probabilities and guaranteed connectivity. These maps are solvable, non-trivial, reproducible, and better suited for comparing game-playing agents. On the controlled random 8$\times$8 benchmark, optimistic Q-learning reaches 0.988 mean final success, followed by Expected SARSA and SARSA above 0.89. The Gymnasium standard 8$\times$8 result is retained as an important standard game benchmark, and the Gymnasium random-map results are retained as a diagnostic motivation for careful map design.
 \end{abstract}
 
 \section{Introduction}
